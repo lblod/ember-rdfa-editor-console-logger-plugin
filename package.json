@@ -1,5 +1,5 @@
 {
-  "name": "ember-rdfa-editor-console-logger-plugin",
+  "name": "@lblod/ember-rdfa-editor-console-logger-plugin",
   "version": "0.5.0",
   "description": "Demo plugin which logs basic content to the console",
   "keywords": [
