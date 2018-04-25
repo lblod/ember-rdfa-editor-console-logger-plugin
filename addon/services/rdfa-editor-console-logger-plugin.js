@@ -2,6 +2,7 @@ import { debug } from '@ember/debug';
 import { Promise } from 'rsvp';
 import Service from '@ember/service';
 import EmberObject from '@ember/object';
+import { task } from 'ember-concurrency';
 
 /**
 * RDFa Editor plugin that pushes a dummy hint on specific keyword.
@@ -31,21 +32,18 @@ export default Service.extend({
   keyword: 'console',
 
   /**
-   * Handles the incoming events from the editor dispatcher asynchronously
+   * Restartable task to handle the incoming events from the editor dispatcher
    *
    * @method execute
    *
-   * @param {string} hrId Unique identifier of the event in the hints registry
+   * @param {string} hrId Unique identifier of the event in the hintsRegistry
    * @param {Array} contexts RDFa contexts of the text snippets the event applies on
    * @param {Object} hintsRegistry Registry of hints in the editor
    * @param {Object} editor The RDFa editor instance
    *
-   * @return {Promise} A promise that resolves when the hints registry has been updated
-   *                  (adding new hints and removing outdated hints)
-   *
    * @public
-  */
-  async execute(hrId, contexts, hintsRegistry, editor) {
+   */
+  execute: task(function * (hrId, contexts, hintsRegistry, editor) {
     const promises = contexts.map((context) => {
       new Promise((resolve) => {
         const hints = this.generateHintsForContext(context, hrId, hintsRegistry, editor);
@@ -60,8 +58,8 @@ export default Service.extend({
       });
     });
 
-    await Promise.all(promises);
-  },
+    yield Promise.all(promises);
+  }).restartable(),
 
   /**
    * Generates hints for a location matching the keyword
