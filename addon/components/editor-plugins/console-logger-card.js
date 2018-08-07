@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import Ember from 'ember';
+import { debug } from '@ember/debug';
 import { reads } from '@ember/object/computed';
 import layout from '../../templates/components/editor-plugins/console-logger-card';
 
@@ -54,7 +54,7 @@ export default Component.extend({
      * @private
     */
     insert(){
-      Ember.Logger.debug(`Insert card: ${this.get('info.title')}`);
+      debug(`Insert card: ${this.get('info.title')}`);
 
       let mappedLocation = this.get('hintsRegistry').updateLocationToCurrentIndex(this.get('hrId'), this.get('location'));
 
